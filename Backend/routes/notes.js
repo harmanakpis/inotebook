@@ -66,8 +66,8 @@ const{title,description,tag } = req.body;
 // Update  notes
 router.delete("/deletenote/:id", fetchuser , async (req, res) => {
     // Find the note to be delete
-
-    let note = await Note.findById(req.params.id);
+try {
+  let note = await Note.findById(req.params.id);
     if(!note){
       return res.status(404).send("not found");
     }
@@ -78,6 +78,11 @@ router.delete("/deletenote/:id", fetchuser , async (req, res) => {
 
     note = await Note.findByIdAndDelete(req.params.id)
     res.json({"status":"Note deleted"}) 
+} catch (error) {
+  console.error(error.message);
+  res.status(500).send("Server Error"); 
+}
+    
 
 });
 

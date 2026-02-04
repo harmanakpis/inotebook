@@ -17,10 +17,11 @@ router.post("/createuser", [
   body('email').isEmail(),
   body('password').isLength({ min: 6 })
 ], async (req, res) => {
-
+  let success = false;
+  // If there are errors, return Bad request and the errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({success: false, errors: errors.array() });
   }
 
   try {
@@ -38,11 +39,11 @@ router.post("/createuser", [
     };
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+    res.json({ success: true, token });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Server Error");
+    console.error(error.message);
+    res.status(500).send({ success: false, error: error.message });
   }
 });
 
@@ -78,7 +79,7 @@ router.post("/login", [
     };
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+    res.json({ success: true, token });
 
   } catch (error) {
     console.error(error);
